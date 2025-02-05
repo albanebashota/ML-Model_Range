@@ -30,7 +30,7 @@ URL: http://127.0.0.1:8000/docs
 }
 
 
-2. **Pergjigja JSON**
+ 2. **Pergjigja JSON**
 
 
 {
