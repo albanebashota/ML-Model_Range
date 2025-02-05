@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 import os
 import gdown
-from pydantic import BaseModel
+from pydantic import BaseModel l
 
 # ID-te e skedareve nga Google Drive
 file_links = {
