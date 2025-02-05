@@ -13,4 +13,19 @@ Lista e skedareve qe shkarkohen:
 Metoda: POST
 
 URL: http://127.0.0.1:8000/docs 
-
+ **Shembull i kerkeses JSON**
+{
+  "neo_make": "Toyota",
+  "neo_model": "Corolla",
+  "neo_year": 2020,
+  "neo_engine": "1.8L",
+  "price": 20000,
+  "miles": 30000
+}
+**Pergjigja JSON**
+json
+Copy
+Edit
+{
+  "prediction": "Fair Deal"
+}
