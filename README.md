@@ -15,6 +15,7 @@ Metoda: POST
 URL: http://127.0.0.1:8000/docs 
 
  **Shembull i kerkeses JSON**
+ 
 {
   "neo_make": "Toyota",
   "neo_model": "Corolla",
@@ -26,9 +27,8 @@ URL: http://127.0.0.1:8000/docs
 
 
 **Pergjigja JSON**
-json
-Copy
-Edit
+
+
 {
   "prediction": "Fair Deal"
 }
