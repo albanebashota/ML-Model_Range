@@ -13,6 +13,7 @@ Lista e skedareve qe shkarkohen:
 Metoda: POST
 
 URL: http://127.0.0.1:8000/docs 
+
  **Shembull i kerkeses JSON**
 {
   "neo_make": "Toyota",
@@ -22,6 +23,8 @@ URL: http://127.0.0.1:8000/docs
   "price": 20000,
   "miles": 30000
 }
+
+
 **Pergjigja JSON**
 json
 Copy
