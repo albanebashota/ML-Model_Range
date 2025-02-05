@@ -13,7 +13,7 @@ scaler.pkl: Normalizes the input data.
 
 target_encoder.pkl: Converts classes into final labels.
 
-**Endpoint for Predicting a Vehicle's Category**
+# ****Endpoint for Predicting a Vehicle's Category***
 
 Method: POST
 
