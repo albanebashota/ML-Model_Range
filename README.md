@@ -14,8 +14,7 @@ Metoda: POST
 
 URL: http://127.0.0.1:8000/docs 
 
-** **Shembull i kerkeses JSON**
-** 
+1. **Shembull i kerkeses JSON**
 {
   "neo_make": "Toyota",
   
@@ -31,7 +30,7 @@ URL: http://127.0.0.1:8000/docs
 }
 
 
-**Pergjigja JSON**
+2. **Pergjigja JSON**
 
 
 {
