@@ -22,8 +22,11 @@ URL: http://127.0.0.1:8000/docs
   "neo_model": "Corolla",
   
   "neo_year": 2020,
+  
   "neo_engine": "1.8L",
+  
   "price": 20000,
+  
   "miles": 30000
 }
 
