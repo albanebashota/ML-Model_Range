@@ -11,5 +11,6 @@ Lista e skedareve qe shkarkohen:
 
 # Endpoint për parashikimin e një veture
 Metoda: POST
+
 URL: http://127.0.0.1:8000/docs 
 
