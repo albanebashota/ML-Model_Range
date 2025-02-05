@@ -2,11 +2,17 @@
 The API automatically downloads the necessary files from Google Drive if they are not present locally. The files include:
 
 label_encoders.pkl: Encodes categories for neo_make, neo_model, etc.
+
 labels_model.pkl: The main model for predictions.
+
 model.pkl: Reference for ml_model (statistics).
+
 scaler.pkl: Normalizes the input data.
+
 target_encoder.pkl: Converts classes into final labels.
+
 Endpoint for Predicting a Vehicle's Category
+
 Method: POST
 
 URL: http://127.0.0.1:8000/docs
