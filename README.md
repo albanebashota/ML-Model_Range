@@ -1,5 +1,7 @@
 # Downloading and Using the Machine Learning Model
-The API automatically downloads the necessary files from Google Drive if they are not present locally. The files include:
+The API automatically downloads the necessary files from Google Drive.
+
+The files include:
 
 label_encoders.pkl: Encodes categories for neo_make, neo_model, etc.
 
