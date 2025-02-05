@@ -36,6 +36,7 @@ URL: http://127.0.0.1:8000/docs
 
 
 **Endpoint for Range**
+
 Method: POST
 
 URL: http://127.0.0.1:8080/docs
