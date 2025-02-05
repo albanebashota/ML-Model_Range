@@ -11,7 +11,7 @@ scaler.pkl: Normalizes the input data.
 
 target_encoder.pkl: Converts classes into final labels.
 
-Endpoint for Predicting a Vehicle's Category
+**Endpoint for Predicting a Vehicle's Category**
 
 Method: POST
 
@@ -33,3 +33,10 @@ URL: http://127.0.0.1:8000/docs
 {
   "prediction": "Fair Deal"
 }
+
+
+**Endpoint for Range**
+Method: POST
+
+URL: http://127.0.0.1:8080/docs
+
