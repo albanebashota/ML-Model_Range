@@ -9,7 +9,7 @@ target_encoder.pkl: Converts classes into final labels.
 Endpoint for Predicting a Vehicle's Category
 Method: POST
 
-URL: http://127.0.0.1:8000/predict
+URL: http://127.0.0.1:8000/docs
 
 **JSON Request:**
 
