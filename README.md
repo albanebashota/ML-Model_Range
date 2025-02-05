@@ -1,37 +1,28 @@
-Deal_ML-Model
+# Downloading and Using the Machine Learning Model
+The API automatically downloads the necessary files from Google Drive if they are not present locally. The files include:
 
-# Shkarkimi i Modeleve te Machine Learning
-Si modeli ashtu edhe scaler-i jane te ruajtur ne Google Drive.API automatikisht i shkarkon skedaret nga Drive.
-Lista e skedareve qe shkarkohen:
-1. label_encoders.pkl	Encode kategorite per neo_make, neo_model, etj.
-2. labels_model.pkl	Modeli kryesor per parashikime
-3. model.pkl	Reference per ml_model(statistikat)
-4. scaler.pkl	Normalizimi i te dhenave hyrese
-5. target_encoder.pkl	Konvertimi i klasave ne etiketat perfundimtare
+label_encoders.pkl: Encodes categories for neo_make, neo_model, etc.
+labels_model.pkl: The main model for predictions.
+model.pkl: Reference for ml_model (statistics).
+scaler.pkl: Normalizes the input data.
+target_encoder.pkl: Converts classes into final labels.
+Endpoint for Predicting a Vehicle's Category
+Method: POST
 
-# Endpoint për parashikimin e një veture
-Metoda: POST
+URL: http://127.0.0.1:8000/predict
 
-URL: http://127.0.0.1:8000/docs 
+**JSON Request:**
 
-1. **Shembull i kerkeses JSON**
 {
   "neo_make": "Toyota",
-  
   "neo_model": "Corolla",
-  
   "neo_year": 2020,
-  
   "neo_engine": "1.8L",
-  
   "price": 20000,
-  
   "miles": 30000
 }
 
-
-  2. **Pergjigja JSON**
-
+**JSON Response:**
 
 {
   "prediction": "Fair Deal"
