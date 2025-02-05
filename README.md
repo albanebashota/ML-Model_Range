@@ -7,3 +7,7 @@ Lista e skedareve qe shkarkohen:
 3. model.pkl	Reference per ml_model(statistikat)
 4. scaler.pkl	Normalizimi i te dhenave hyrese
 5. target_encoder.pkl	Konvertimi i klasave ne etiketat perfundimtare
+#Endpoint për parashikimin e një veture
+Metoda: POST
+URL: http://127.0.0.1:8000/docs 
+
