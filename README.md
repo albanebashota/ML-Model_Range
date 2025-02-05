@@ -7,7 +7,7 @@ label_encoders.pkl: Encodes categories for neo_make, neo_model, etc.
 
 labels_model.pkl: The main model for predictions.
 
-model.pkl: Reference for ml_model (statistics)..
+model.pkl: Reference for ml_model (statistics).
 
 scaler.pkl: Normalizes the input data.
 
