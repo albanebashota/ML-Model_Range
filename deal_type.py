@@ -8,7 +8,7 @@ import time
 from tqdm import tqdm
 label_encoders = joblib.load('label_encoders.pkl')
 target_encoder = joblib.load('target_encoder.pkl')
-scaler = joblib.load('scaler.pkl')
+scaler = joblib.load('scaler.pkl').
 stats_df = pd.read_parquet('ml_model.parquet')
 session = ort.InferenceSession('label_model.onnx', providers=['CPUExecutionProvider'])
 required_features = [
