@@ -19,7 +19,7 @@ class CarInput(BaseModel):
     neo_year: int
     price: float
     miles: float
-    neo_engine: str | None = None  # Optional
+    neo_engine: str | None = None  
 
 @app.post("/predict")
 def predict_deal(data: CarInput):
@@ -44,22 +44,25 @@ def predict_deal(data: CarInput):
         le = label_encoders[col]
         merged[col] = merged[col].astype(str)
         merged[col] = merged[col].apply(lambda x: le.transform([x])[0] if x in le.classes_ else -1)
-
     merged.fillna(0, inplace=True)
-
-    required_features = ['neo_make', 'neo_model', 'neo_engine', 'neo_year', 'price', 'miles']
+    required_features = scaler.feature_names_in_
     X = merged[required_features].astype(float)
     X_scaled = scaler.transform(X)
-
     input_name = session.get_inputs()[0].name
     preds = session.run(None, {input_name: X_scaled.astype(np.float32)})[0]
     deal_type = target_encoder.inverse_transform(preds.astype(int))[0]
-
     diff_price = float(merged['price'] - merged['mean_price'])
     diff_miles = float(merged['miles'] - merged['mean_miles'])
-    price_status = "Below Average" if diff_price < 0 else "Above Average" if diff_price > 0 else "Average"
-    miles_status = "Low Mileage" if diff_miles < 0 else "High Mileage" if diff_miles > 0 else "Average"
-
+    price_status = (
+        "Below Average" if diff_price < 0 else
+        "Above Average" if diff_price > 0 else
+        "Average"
+    )
+    miles_status = (
+        "Low Mileage" if diff_miles < 0 else
+        "High Mileage" if diff_miles > 0 else
+        "Average"
+    )
     return {
         "prediction": deal_type,
         "min_price": float(merged['min_price']),
