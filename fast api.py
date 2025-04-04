@@ -6,7 +6,7 @@ import joblib
 import onnxruntime as ort
 
 app = FastAPI()
-.
+
 # Ngarko modelet dhe encoders
 label_encoders = joblib.load('label_encoders.pkl')
 target_encoder = joblib.load('target_encoder.pkl')
