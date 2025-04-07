@@ -21,35 +21,52 @@ class CarInput(BaseModel):
     neo_year: int
     price: float
     miles: float
+
 @app.post("/predict")
 def predict_label(car: CarInput):
     df = pd.DataFrame([car.dict()])
     df['neo_model'] = df['neo_model'].astype(str)
     df['neo_engine'] = df['neo_engine'].astype(str)
+
+    # Log për debugging
+    print(f"Input data: {df}")
+
     if df['neo_engine'].isna().all() or df['neo_engine'].eq("None").all():
         merge_keys = ['neo_make', 'neo_model', 'neo_year']
     elif df['neo_model'].isna().all() or df['neo_model'].eq("None").all():
         merge_keys = ['neo_make', 'neo_year']
     else:
         merge_keys = ['neo_make', 'neo_model', 'neo_year', 'neo_engine']
+
     merged = df.merge(stats_df, how='left', on=merge_keys)
+
+    # Kontrolli nëse ndodhin probleme gjatë merge
     if merged.isnull().any().any():
+        print(f"Null values in merged data: {merged[merged.isnull().any(axis=1)]}")
         raise HTTPException(status_code=404, detail="Statistikat nuk u gjetën për këtë kombinim.")
+
+    # Përditësimi i vlerës së çmimit dhe kilometrazhit
     merged['price'] = df['price'].values
     merged['miles'] = df['miles'].values
     row = merged.iloc[0]
     count = row['count']
+
+    # Prediksionet
     label_price = rating_from_value(
         row['price'], row['min_price'], row['Q1_price'],
         row['mean_price'], row['Q3_price'], row['max_price']
     )
     label_price = append_uncertain(label_price, count)
+    
     label_miles = rating_from_value(
         row['miles'], row['min_miles'], row['Q1_miles'],
         row['mean_miles'], row['Q3_miles'], row['max_miles']
     )
     label_miles = append_uncertain(label_miles, count)
+    
     final_label = combine_final_label(label_price, label_miles, count)
+    
+    # Kthimi i rezultatit
     return {
         "min_price": int(row['min_price']),
         "max_price": int(row['max_price']),
