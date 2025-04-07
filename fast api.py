@@ -2,23 +2,18 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
 import numpy as np
-import joblib
-import onnxruntime as ort
-import json
+
+functions_df = pd.read_pickle("target_encoder.pkl") 
+
+globals_dict = {"pd": pd, "np": np}  
+for code in functions_df["Code"]:
+    exec(code, globals_dict)
+rating_from_value = globals_dict["rating_from_value"]
+append_uncertain = globals_dict["append_uncertain"]
+combine_final_label = globals_dict["combine_final_label"]
 app = FastAPI()
-# Ngarko komponentët e modelit
-label_encoders = joblib.load('label_encoders.pkl')
-target_encoder = joblib.load('target_encoder.pkl')
-scaler = joblib.load('scaler.pkl')
-stats_df = pd.read_parquet('ml_model.parquet')
-session = ort.InferenceSession('label_model.onnx', providers=['CPUExecutionProvider'])
-# Lista e input features që kërkohen nga modeli ONNX
-required_features = [
-    'neo_make', 'neo_model', 'neo_engine', 'neo_year', 'price', 'miles',
-    'Q3_miles', 'Q3_price', 'Q1_price', 'Q1_miles',
-    'min_price', 'mean_miles', 'mean_price', 'max_price', 'min_miles', 'max_miles'
-]
-# Formati i input-it për FastAPI
+stats_df = pd.read_parquet("ml_model.parquet")
+
 class CarInput(BaseModel):
     neo_make: str
     neo_model: str = None
@@ -27,61 +22,50 @@ class CarInput(BaseModel):
     price: float
     miles: float
 @app.post("/predict")
-def predict_deal_type(car: CarInput):
-    # Krijo DataFrame për një veturë
+def predict_label(car: CarInput):
     df = pd.DataFrame([car.dict()])
-    # Zëvendëso 0 ose bosh me NA
-    df.replace({"neo_engine": {0: None}, "neo_model": {0: None}}, inplace=True)
-    # Konverto në string për label encoding
-    df['neo_model'] = df['neo_model'].astype("string")
-    df['neo_engine'] = df['neo_engine'].astype("string")
-    # Zgjidh kolonat për merge sipas të dhënave
-    if df['neo_engine'].isna().all():
-        merge_cols = ['neo_make', 'neo_model', 'neo_year']
-    elif df['neo_model'].isna().all():
-        merge_cols = ['neo_make', 'neo_year']
+    df['neo_model'] = df['neo_model'].astype(str)
+    df['neo_engine'] = df['neo_engine'].astype(str)
+    if df['neo_engine'].isna().all() or df['neo_engine'].eq("None").all():
+        merge_keys = ['neo_make', 'neo_model', 'neo_year']
+    elif df['neo_model'].isna().all() or df['neo_model'].eq("None").all():
+        merge_keys = ['neo_make', 'neo_year']
     else:
-        merge_cols = ['neo_make', 'neo_model', 'neo_year', 'neo_engine']
-    # Bëj merge me statistikat
-    merged = df.merge(stats_df, on=merge_cols, how='left')
+        merge_keys = ['neo_make', 'neo_model', 'neo_year', 'neo_engine']
+    merged = df.merge(stats_df, how='left', on=merge_keys)
     if merged.isnull().any().any():
-        raise HTTPException(status_code=400, detail="Statistikat mungojnë për këtë veturë.")
-    # Rikthe vlerat origjinale për price dhe miles
+        raise HTTPException(status_code=404, detail="Statistikat nuk u gjetën për këtë kombinim.")
     merged['price'] = df['price'].values
     merged['miles'] = df['miles'].values
-    # Label encoding për kategoritë
-    for col in ['neo_make', 'neo_model', 'neo_engine']:
-        le = label_encoders[col]
-        val = str(merged[col].values[0])
-        if val in le.classes_:
-            merged[col] = le.transform([val])[0]
-        else:
-            merged[col] = -1
-    # Mbush mungesat me 0
-    merged.fillna(0, inplace=True)
-    # Inferencë me modelin ONNX
-    X = merged[required_features].astype(float)
-    X_scaled = scaler.transform(X)
-    input_name = session.get_inputs()[0].name
-    pred = session.run(None, {input_name: X_scaled.astype(np.float32)})[0]
-    label = target_encoder.inverse_transform(pred.astype(int))[0]
-    # Përgjigje e plotë JSON
+    row = merged.iloc[0]
+    count = row['count']
+    label_price = rating_from_value(
+        row['price'], row['min_price'], row['Q1_price'],
+        row['mean_price'], row['Q3_price'], row['max_price']
+    )
+    label_price = append_uncertain(label_price, count)
+    label_miles = rating_from_value(
+        row['miles'], row['min_miles'], row['Q1_miles'],
+        row['mean_miles'], row['Q3_miles'], row['max_miles']
+    )
+    label_miles = append_uncertain(label_miles, count)
+    final_label = combine_final_label(label_price, label_miles, count)
     return {
-        "min_price": float(merged['min_price'].values[0]),
-        "max_price": float(merged['max_price'].values[0]),
-        "Q1_price": float(merged['Q1_price'].values[0]),
-        "Q3_price": float(merged['Q3_price'].values[0]),
-        "difference_price": float(df['price'].values[0] - merged['mean_price'].values[0]),
-        "difference_miles": float(df['miles'].values[0] - merged['mean_miles'].values[0]),
+        "min_price": int(row['min_price']),
+        "max_price": int(row['max_price']),
+        "Q1_price": int(row['Q1_price']),
+        "Q3_price": int(row['Q3_price']),
+        "difference_price": int(row['price'] - row['mean_price']),
+        "difference_miles": int(row['miles'] - row['mean_miles']),
         "price_status": (
-            "Below Average" if df['price'].values[0] < merged['mean_price'].values[0]
-            else "Above Average" if df['price'].values[0] > merged['mean_price'].values[0]
+            "Below Average" if row['price'] < row['mean_price']
+            else "Above Average" if row['price'] > row['mean_price']
             else "As Average"
         ),
         "miles_status": (
-            "Below Average" if df['miles'].values[0] < merged['mean_miles'].values[0]
-            else "Above Average" if df['miles'].values[0] > merged['mean_miles'].values[0]
+            "Below Average" if row['miles'] < row['mean_miles']
+            else "Above Average" if row['miles'] > row['mean_miles']
             else "As Average"
         ),
-        "prediction": label
+        "prediction": final_label
     }
