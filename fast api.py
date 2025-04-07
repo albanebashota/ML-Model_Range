@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 
-functions_df = pd.read_pickle("target_encoder.pkl") 
+functions_df = pd.read_pickle("encoder.pkl") 
 
 globals_dict = {"pd": pd, "np": np}  
 for code in functions_df["Code"]:
