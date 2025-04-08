@@ -1,47 +1,56 @@
-# Downloading and Using the Machine Learning Model
-The API automatically downloads the necessary files from Google Drive.
+# Car Deal Prediction API
 
-The files include:
+This FastAPI service predicts the **deal type** of a used car based on various attributes, primarily **price** and **mileage**.
+Predictions are made using a **pre-built ML model (`label.pkl`)** also statistical benchmarks (such as percentiles, averages, min/max values) generated from millions of car listings. The service applies rule-based logic on top of these statistics to classify a car as a **Good Deal, Fair Deal, Great Deal**, etc.
 
-label_encoders.pkl: Encodes categories for neo_make, neo_model, etc.
+Features Used
 
-labels_model.pkl: The main model for predictions.
+The model focuses on:
 
-model.pkl: Reference for ml_model (statistics).
+- **Key input features**:  
+  - `price`  
+  - `miles`
 
-scaler.pkl: Normalizes the input data.
+- **Additional features used during XGBoost model training** include:  
+  - `neo_make`, `neo_model`, `neo_year`, `neo_engine`  
+  - Market-based statistical features (e.g. `Q1_price`, `Q3_price`, `mean_price`, etc.)  
+  - Derived ratios and price/mileage deviation metrics
 
-target_encoder.pkl: Converts classes into final labels.
+These features are stored in the `ml_model.parquet` and used during inference to ensure accurate classification.
 
-# Endpoint for Predicting a Vehicle's Label
+---
 
-Method: POST
+Run Locally
 
-URL: http://127.0.0.1:8000/docs
+To run the service locally, install the required dependencies and launch the FastAPI server:
 
-**JSON Request:**
+```bash
+pip install -r requirements.txt
+uvicorn app:app --reload
+Once the server is running, you can access the interactive API documentation (Swagger UI) by opening the following URL in your browser:
 
+http://localhost:8000/docs (or http://127.0.0.1:8000/docs) ```
+
+Example Request
+	**Endpoint: POST http://localhost:8000/predict
 {
   "neo_make": "Toyota",
   "neo_model": "Corolla",
-  "neo_year": 2020,
   "neo_engine": "1.8L",
-  "price": 20000,
-  "miles": 30000
+  "neo_year": 2018,
+  "price": 12000,
+  "miles": 75000
 }
 
-**JSON Response:**
-
+**Example Response
 {
+  "min_price": 9500,
+  "max_price": 14500,
+  "Q1_price": 11000,
+  "Q3_price": 13000,
+  "difference_price": -500,
+  "difference_miles": 3000,
+  "price_status": "Below Average",
+  "miles_status": "Above Average",
   "prediction": "Fair Deal"
 }
-
-
-**Endpoint for Range**
-
-Method: POST
-
-URL: http://127.0.0.1:8080/docs
-
-
-JSON Request & JSON Respone same as at the endpoint for predicting labels
