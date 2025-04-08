@@ -32,7 +32,7 @@ Once the server is running, you can access the interactive API documentation (Sw
 http://localhost:8000/docs (or http://127.0.0.1:8000/docs) ```
 
 Example Request
-	**Endpoint: POST http://localhost:8000/predict
+**Endpoint: POST http://localhost:8000/predict
 {
   "neo_make": "Toyota",
   "neo_model": "Corolla",
