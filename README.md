@@ -34,23 +34,23 @@ http://localhost:8000/docs (or http://127.0.0.1:8000/docs) ```
 Example Request
 **Endpoint: POST http://localhost:8000/predict
 {
-  "neo_make": "Toyota",
-  "neo_model": "Corolla",
-  "neo_engine": "1.8L",
-  "neo_year": 2018,
-  "price": 12000,
-  "miles": 75000
+  "neo_make": "Audi",
+  "neo_model": "A8",
+  "neo_engine": "3.0L V6",
+  "neo_year": 2021,
+  "price": 39278,
+  "miles": 33124
 }
 
 **Example Response
 {
-  "min_price": 9500,
-  "max_price": 14500,
-  "Q1_price": 11000,
-  "Q3_price": 13000,
-  "difference_price": -500,
-  "difference_miles": 3000,
+  "min_price": 30650,
+  "max_price": 67848,
+  "Q1_price": 38791,
+  "Q3_price": 45988,
+  "difference_price": -2837,
+  "difference_miles": -8832,
   "price_status": "Below Average",
-  "miles_status": "Above Average",
-  "prediction": "Fair Deal"
+  "miles_status": "Below Average",
+  "prediction": "GOOD DEAL"
 }
