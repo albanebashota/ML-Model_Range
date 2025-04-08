@@ -25,7 +25,6 @@ Run Locally
 To run the service locally, install the required dependencies and launch the FastAPI server:
 
 ```bash
-pip install -r requirements.txt
 uvicorn app:app --reload
 Once the server is running, you can access the interactive API documentation (Swagger UI) by opening the following URL in your browser:
 
